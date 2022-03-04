@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Project/RunningTracker/app/src/main/res/drawable/add_black.xml" value="0.165" />
         <entry key="..\:/Android Project/RunningTracker/app/src/main/res/layout/activity_main.xml" value="0.1203125" />
+        <entry key="..\:/Android Project/RunningTracker/app/src/main/res/layout/fragment_run.xml" value="0.21240942028985507" />
         <entry key="..\:/Android Project/RunningTracker/app/src/main/res/layout/fragment_welcome.xml" value="0.21240942028985507" />
       </map>
     </option>

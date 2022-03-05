@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
 
         //don't show bottom navigation view in tracking and welcome fragment
-        //for that we use on destinationchange listener
+        //for that we use on destination change listener
 
         navHostFragment.findNavController()
             .addOnDestinationChangedListener { _, destination, _ ->

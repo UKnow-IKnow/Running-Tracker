@@ -13,7 +13,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
-import com.bumptech.glide.load.engine.executor.GlideExecutor.UncaughtThrowableStrategy.LOG
 import com.example.runningtracker.R
 import com.example.runningtracker.ui.MainActivity
 import com.example.runningtracker.util.Constants.ACTION_PAUSE_SERVICE
@@ -23,6 +22,8 @@ import com.example.runningtracker.util.Constants.ACTION_STOP_SERVICE
 import com.example.runningtracker.util.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.runningtracker.util.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.runningtracker.util.Constants.NOTIFICATION_ID
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
 import timber.log.Timber
 
@@ -63,6 +64,20 @@ class TrackingService : LifecycleService() {
             }
         }
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    //request location updates
+    val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
+            super.onLocationResult(result)
+            if(isTracking.value!!) {
+                result?.locations?.let { locations ->
+                    for (location in locations){
+                        addPathPoint(location)
+                    }
+                }
+            }
+        }
     }
 
     private fun addPathPoint(location: Location?) {

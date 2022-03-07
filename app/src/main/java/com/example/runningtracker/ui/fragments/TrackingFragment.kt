@@ -6,10 +6,14 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.runningtracker.R
+import com.example.runningtracker.services.Polyline
 import com.example.runningtracker.services.TrackingService
 import com.example.runningtracker.ui.viewModels.MainViewModel
 import com.example.runningtracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.runningtracker.util.Constants.POLYLINE_COLOR
+import com.example.runningtracker.util.Constants.POLYLINE_WIDTH
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.PolylineOptions
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
 
@@ -17,6 +21,9 @@ import kotlinx.android.synthetic.main.fragment_tracking.*
 class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private val viewModel: MainViewModel by viewModels()
+
+    private var isTracking = false
+    private var pathPoints = mutableListOf<Polyline>()
 
     private var map: GoogleMap? = null
 
@@ -29,6 +36,19 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         }
         mapView.getMapAsync {
             map = it
+        }
+    }
+
+    private fun addLatestPolyline() {
+        if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            val preLastLatLng = pathPoints.last()[pathPoints.last().size -2]
+            val lastLatLng = pathPoints.last().last()
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .add(preLastLatLng)
+                .add(lastLatLng)
+            map?.addPolyline(polylineOptions)
         }
     }
 

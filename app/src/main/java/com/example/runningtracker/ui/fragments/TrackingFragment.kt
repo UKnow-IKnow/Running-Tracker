@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.runningtracker.R
 import com.example.runningtracker.services.Polyline
 import com.example.runningtracker.services.TrackingService
 import com.example.runningtracker.ui.viewModels.MainViewModel
+import com.example.runningtracker.util.Constants.ACTION_PAUSE_SERVICE
 import com.example.runningtracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
 import com.example.runningtracker.util.Constants.MAP_ZOOM
 import com.example.runningtracker.util.Constants.POLYLINE_COLOR
@@ -34,10 +36,33 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         mapView.onCreate(savedInstanceState)
 
         btnToggleRun.setOnClickListener {
-            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
+           toggleRun()
         }
         mapView.getMapAsync {
             map = it
+            addAllPolyline()
+        }
+
+        subscribeToObserver()
+    }
+
+    private fun  subscribeToObserver(){
+        TrackingService.isTracking.observe(viewLifecycleOwner, Observer {
+            updateTracking(it)
+        })
+
+        TrackingService.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLatestPolyline()
+            moveCameraToUser()
+        })
+    }
+
+    private fun toggleRun(){
+        if (isTracking){
+            sendCommandToService(ACTION_PAUSE_SERVICE)
+        }else{
+            sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
         }
     }
 

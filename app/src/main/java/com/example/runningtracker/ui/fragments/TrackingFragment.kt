@@ -41,6 +41,17 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    private fun updateTracking(isTracking: Boolean) {
+        this.isTracking = isTracking
+        if(isTracking) {
+            btnToggleRun.text = "Start"
+            btnFinishRun.visibility = View.VISIBLE
+        }else {
+            btnToggleRun.text = "Stop"
+            btnFinishRun.visibility = View.GONE
+        }
+    }
+
     private fun moveCameraToUser(){
         if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()){
             map?.animateCamera(

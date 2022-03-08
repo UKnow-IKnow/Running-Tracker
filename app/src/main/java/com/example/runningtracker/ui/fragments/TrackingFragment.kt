@@ -10,8 +10,10 @@ import com.example.runningtracker.services.Polyline
 import com.example.runningtracker.services.TrackingService
 import com.example.runningtracker.ui.viewModels.MainViewModel
 import com.example.runningtracker.util.Constants.ACTION_START_OR_RESUME_SERVICE
+import com.example.runningtracker.util.Constants.MAP_ZOOM
 import com.example.runningtracker.util.Constants.POLYLINE_COLOR
 import com.example.runningtracker.util.Constants.POLYLINE_WIDTH
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,9 +41,30 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         }
     }
 
+    private fun moveCameraToUser(){
+        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()){
+            map?.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    pathPoints.last().last(),
+                    MAP_ZOOM
+                )
+            )
+        }
+    }
+
+    private fun addAllPolyline() {
+        for (polyline in pathPoints) {
+            val polylineOptions = PolylineOptions()
+                .color(POLYLINE_COLOR)
+                .width(POLYLINE_WIDTH)
+                .addAll(polyline)
+            map?.addPolyline(polylineOptions)
+        }
+    }
+
     private fun addLatestPolyline() {
         if (pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
-            val preLastLatLng = pathPoints.last()[pathPoints.last().size -2]
+            val preLastLatLng = pathPoints.last()[pathPoints.last().size - 2]
             val lastLatLng = pathPoints.last().last()
             val polylineOptions = PolylineOptions()
                 .color(POLYLINE_COLOR)

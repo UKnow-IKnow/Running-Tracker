@@ -19,6 +19,7 @@ import com.example.runningtracker.util.TrackingUtility
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
 
@@ -92,7 +93,16 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         this.menu = menu
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        if(currentTimeInMillis > 0L){
+            this.menu?.getItem(0)?.isVisible = true
+        }
+    }
 
+    private fun showCancelTrackingDialog(){
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+    }
 
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking

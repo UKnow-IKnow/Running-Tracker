@@ -25,6 +25,8 @@ import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_tracking.*
+import java.util.*
+import kotlin.math.round
 
 @AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking) {
@@ -172,6 +174,18 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
                 (mapView.height * 0.05f).toInt()
             )
         )
+    }
+
+    private fun endRunAndSaveToDatabase(){
+        map?.snapshot { bitmap ->
+            var distanceInMeter = 0
+            for (polyline in pathPoints){
+                distanceInMeter += TrackingUtility.calculatePolylineLength(polyline).toInt()
+            }
+            val avgSpeed = round((distanceInMeter / 1000f) / (currentTimeInMillis / 1000f / 60 / 60) * 10) / 10f
+            val dateTimestamp = Calendar.getInstance().timeInMillis
+
+        }
     }
 
     private fun addAllPolyline() {

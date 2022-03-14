@@ -34,7 +34,7 @@ import kotlin.math.round
 @AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
-    private val viewModel by activityViewModels<MainViewModel>()
+    private val viewModel: MainViewModel by viewModels()
 
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()

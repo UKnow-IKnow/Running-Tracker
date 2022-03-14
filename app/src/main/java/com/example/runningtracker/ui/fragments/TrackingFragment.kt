@@ -20,6 +20,7 @@ import com.example.runningtracker.util.Constants.POLYLINE_WIDTH
 import com.example.runningtracker.util.TrackingUtility
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
@@ -53,7 +54,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         mapView.onCreate(savedInstanceState)
 
         btnToggleRun.setOnClickListener {
-           toggleRun()
+            toggleRun()
         }
         mapView.getMapAsync {
             map = it
@@ -63,7 +64,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         subscribeToObserver()
     }
 
-    private fun  subscribeToObserver(){
+    private fun subscribeToObserver() {
         TrackingService.isTracking.observe(viewLifecycleOwner, Observer {
             updateTracking(it)
         })
@@ -76,35 +77,35 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
         TrackingService.timeRunInMillis.observe(viewLifecycleOwner, Observer {
             currentTimeInMillis = it
-            val formattedTime = TrackingUtility.getStopWatchTime(currentTimeInMillis,true)
+            val formattedTime = TrackingUtility.getStopWatchTime(currentTimeInMillis, true)
             tvTimer.text = formattedTime
         })
     }
 
-    private fun toggleRun(){
-        if (isTracking){
+    private fun toggleRun() {
+        if (isTracking) {
             menu?.getItem(0)?.isVisible = true
             sendCommandToService(ACTION_PAUSE_SERVICE)
-        }else{
+        } else {
             sendCommandToService(ACTION_START_OR_RESUME_SERVICE)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.toolbar_tracking_menu,menu)
+        inflater.inflate(R.menu.toolbar_tracking_menu, menu)
         this.menu = menu
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        if(currentTimeInMillis > 0L){
+        if (currentTimeInMillis > 0L) {
             this.menu?.getItem(0)?.isVisible = true
         }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.miCancelTracking -> {
                 showCancelTrackingDialog()
             }
@@ -112,7 +113,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun showCancelTrackingDialog(){
+    private fun showCancelTrackingDialog() {
         val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
             .setTitle("Cancel the Run")
             .setMessage("Are you sure to cancel the current run and delete all its data?")
@@ -120,7 +121,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
             .setPositiveButton("Yes") { _, _ ->
                 stopRun()
             }
-            .setNegativeButton("No"){ dialogInterface, _ ->
+            .setNegativeButton("No") { dialogInterface, _ ->
                 dialogInterface.cancel()
             }
             .create()
@@ -134,18 +135,18 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private fun updateTracking(isTracking: Boolean) {
         this.isTracking = isTracking
-        if(!isTracking) {
+        if (!isTracking) {
             btnToggleRun.text = "Start"
             btnFinishRun.visibility = View.VISIBLE
-        }else {
+        } else {
             btnToggleRun.text = "Stop"
             menu?.getItem(0)?.isVisible = true
             btnFinishRun.visibility = View.GONE
         }
     }
 
-    private fun moveCameraToUser(){
-        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()){
+    private fun moveCameraToUser() {
+        if (pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty()) {
             map?.animateCamera(
                 CameraUpdateFactory.newLatLngZoom(
                     pathPoints.last().last(),
@@ -153,6 +154,24 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
                 )
             )
         }
+    }
+
+    private fun zoomToSeeWholeTrack() {
+        val bounds = LatLngBounds.builder()
+        for(polyline in pathPoints){
+            for (position in polyline){
+                bounds.include(position)
+            }
+        }
+
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(),
+                mapView.width,
+                mapView.height,
+                (mapView.height * 0.05f).toInt()
+            )
+        )
     }
 
     private fun addAllPolyline() {

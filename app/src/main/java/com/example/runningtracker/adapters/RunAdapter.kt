@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.runningtracker.R
 import com.example.runningtracker.data.Run
+import com.example.runningtracker.util.TrackingUtility
 import kotlinx.android.synthetic.main.item_run.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
 
@@ -45,6 +48,22 @@ class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
         holder.itemView.apply {
             Glide.with(this).load(run.img).into(ivRunImage)
 
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = run.timeStamp
+            }
+            val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+            tvDate.text = dateFormat.format(calendar.time)
+
+            val avgSpeed = "${run.avgSpeedInKMH}km/h"
+            tvAvgSpeed.text = avgSpeed
+
+            val distanceInKm = "${run.distanceInMeter / 1000f}km"
+            tvDistance.text = distanceInKm
+
+            tvTime.text = TrackingUtility.getStopWatchTime(run.timeInMillis)
+
+            val caloriesBurned = "${run.caloriesBurned}kcal"
+            tvCalories.text = caloriesBurned
 
         }
     }

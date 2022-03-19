@@ -32,7 +32,7 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
         requestPermission()
         setupRecyclerView()
 
-        viewModel.runSortedByDate.observe(viewLifecycleOwner, Observer {
+        viewModel.runsSortedByDate.observe(viewLifecycleOwner, Observer {
             runAdapter.submitList(it)
         })
 

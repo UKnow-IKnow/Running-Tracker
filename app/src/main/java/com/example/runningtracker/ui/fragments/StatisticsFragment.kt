@@ -1,5 +1,6 @@
 package com.example.runningtracker.ui.fragments
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import com.example.runningtracker.R
 import com.example.runningtracker.ui.viewModels.MainViewModel
 import com.example.runningtracker.ui.viewModels.StatisticsViewModel
 import com.example.runningtracker.util.TrackingUtility
+import com.github.mikephil.charting.components.XAxis
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_statistics.*
 import kotlin.math.round
@@ -22,6 +24,30 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         super.onViewCreated(view, savedInstanceState)
 
         subscribeToObserver()
+    }
+
+    private fun setUpBarChart(){
+        barChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawLabels(false)
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+        barChart.axisLeft.apply {
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+        barChart.axisRight.apply {
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+        barChart.apply {
+            description.text = "Average Speed Over Time"
+            legend.isEnabled = false
+        }
     }
 
     private fun subscribeToObserver() {

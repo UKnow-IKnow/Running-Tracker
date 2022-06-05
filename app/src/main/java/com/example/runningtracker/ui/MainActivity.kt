@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
         navigateToTrackingFragmentIfNeeded(intent)
 
         bottomNavigationView.setupWithNavController(navHostFragment.findNavController())
+        bottomNavigationView.setOnNavigationItemReselectedListener { /* No Operation */ }
 
         //don't show bottom navigation view in tracking and welcome fragment
         //for that we use on destination change listener
